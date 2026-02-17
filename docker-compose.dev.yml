@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: laundry-api-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: laundry
+      POSTGRES_PASSWORD: rahasia
+      POSTGRES_DB: laundry-api
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data_laundry:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U laundry -d laundry-api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+      start_interval: 2s
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: laundry-api-dev
+    env_file:
+      - .env
+    ports:
+      - "8888:8888"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    command: ["sh", "-c", "npm run dev"]
+    restart: unless-stopped
+
+volumes:
+  postgres_dev_data_laundry:
+  node_modules:

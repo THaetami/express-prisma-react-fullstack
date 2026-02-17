@@ -18,14 +18,14 @@ export const authMiddleware = async (req, res, next) => {
     try {
       const decoded = await securityService.decodeToken(
         token,
-        process.env.JWT_SECRET_KEY
+        process.env.JWT_SECRET_KEY,
       );
       const user = await userRepository.findUserLogin(decoded.userId, token);
 
       if (!user) {
         const response = new ResponseJson(
           401,
-          "Unauthorized - Not authenticated"
+          "Unauthorized - Not authenticated",
         );
         res.status(401).json(response).end();
       } else {

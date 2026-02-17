@@ -1,45 +1,43 @@
 import { prismaClient } from "../application/database.js";
 
 class CustomerRepository {
-    
-    async createCustomer(data) {
-        return prismaClient.customer.create({
-            data
-        });
-    }
+  async createCustomer(data) {
+    return prismaClient.customer.create({
+      data,
+    });
+  }
 
-    async getAllCustomer() {
-        return prismaClient.customer.findMany({
-            where: { deletedAt: null }
-        })
-    }
+  async getAllCustomer() {
+    return prismaClient.customer.findMany({
+      where: { deletedAt: null },
+    });
+  }
 
-    async updateCustomerById(id, data) {
-        return prismaClient.customer.update({
-            where: { id },
-            data: data,
-        })
-    }
+  async updateCustomerById(id, data) {
+    return prismaClient.customer.update({
+      where: { id },
+      data: data,
+    });
+  }
 
-    async findCustomerById(id) {
-        return prismaClient.customer.findFirst({
-            where: { id, deletedAt: null },
-        })
-    }
+  async findCustomerById(id) {
+    return prismaClient.customer.findFirst({
+      where: { id, deletedAt: null },
+    });
+  }
 
-    async deleteById(id) {
-        return prismaClient.customer.update({
-            where: { id },
-            data: { deletedAt: new Date() },
-        });
-    }
+  async deleteById(id) {
+    return prismaClient.customer.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
 
-    async findCustomerTransactionById(id, prismaTransaction) {
-        return prismaTransaction.customer.findFirst({
-            where: { id, deletedAt: null }
-        })
-    }
-    
+  async findCustomerTransactionById(id, prismaTransaction) {
+    return prismaTransaction.customer.findFirst({
+      where: { id, deletedAt: null },
+    });
+  }
 }
 
 export const customerRepository = new CustomerRepository();

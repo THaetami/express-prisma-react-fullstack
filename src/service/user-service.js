@@ -15,7 +15,7 @@ class UserService {
   async register({ body }) {
     const { name, username, email, password, role } = validate(
       registerUserValidation,
-      body
+      body,
     );
     try {
       const newUser = await prismaClient.$transaction(
@@ -32,21 +32,21 @@ class UserService {
 
           const newUser = await userRepository.createUser(
             dataUser,
-            prismaTransaction
+            prismaTransaction,
           );
 
           const { id: roleId } = await roleRepository.findByRoleName(
             role,
-            prismaTransaction
+            prismaTransaction,
           );
 
           await userRolesRepository.addUserRole(
             newUser.id,
             roleId,
-            prismaTransaction
+            prismaTransaction,
           );
           return newUser;
-        }
+        },
       );
       const user = await this.findUserById(newUser.id);
       return UserResponse.convert(user);

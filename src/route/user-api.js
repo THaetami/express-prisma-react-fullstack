@@ -15,31 +15,31 @@ class UserRouter {
       "/users",
       authMiddleware,
       adminMiddleware,
-      userController.register
+      userController.register,
     );
     this.router.get(
       "/users",
       authMiddleware,
       adminMiddleware,
-      userController.getAll
+      userController.getAll,
     );
     this.router.get(
       "/users/:userId",
       authMiddleware,
       adminMiddleware,
-      userController.getById
+      userController.getById,
     );
     this.router.put(
       "/users",
       authMiddleware,
       adminMiddleware,
-      userController.update
+      userController.update,
     );
     this.router.delete(
       "/users/:userId",
       authMiddleware,
       adminMiddleware,
-      userController.delete
+      userController.delete,
     );
   }
 

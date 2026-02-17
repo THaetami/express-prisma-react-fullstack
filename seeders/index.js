@@ -1,70 +1,83 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+import pg from "pg";
 
-// Muat variabel lingkungan dari file .env
 dotenv.config();
 
-const prisma = new PrismaClient();
+// Buat connection pool
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const adapter = new PrismaPg(pool);
+
+const prisma = new PrismaClient({
+  adapter: adapter,
+  log: ["query", "info", "warn", "error"],
+});
+
 const { hash } = bcrypt;
 
 async function main() {
   try {
-    // Membuat data roles jika belum ada
+    console.log("Starting seed...");
+    console.log("Database URL:", process.env.DATABASE_URL); // Cek URL
+
     const adminRole = await prisma.role.findUnique({
-      where: { role: 'ADMIN' },
+      where: { role: "ADMIN" },
     });
 
     if (!adminRole) {
       await prisma.role.create({
-        data: { role: 'ADMIN' },
+        data: { role: "ADMIN" },
       });
-      console.log('Role ADMIN berhasil dibuat.');
+      console.log("✅ Role ADMIN berhasil dibuat.");
     } else {
-      console.log('Role ADMIN sudah ada dalam database.');
+      console.log("⏭️ Role ADMIN sudah ada.");
     }
 
     const employeeRole = await prisma.role.findUnique({
-      where: { role: 'EMPLOYEE' },
+      where: { role: "EMPLOYEE" },
     });
 
     if (!employeeRole) {
       await prisma.role.create({
-        data: { role: 'EMPLOYEE' },
+        data: { role: "EMPLOYEE" },
       });
-      console.log('Role EMPLOYEE berhasil dibuat.');
+      console.log("✅ Role EMPLOYEE berhasil dibuat.");
     } else {
-      console.log('Role EMPLOYEE sudah ada dalam database.');
+      console.log("⏭️ Role EMPLOYEE sudah ada.");
     }
 
-    // Membuat user Admin Super jika belum ada
     const existingAdmin = await prisma.user.findUnique({
-      where: { username: 'supmin' },
+      where: { username: "supmin" },
     });
 
     if (!existingAdmin) {
-      const hashedPassword = await hash('password', 10);
+      const hashedPassword = await hash("password", 10);
       await prisma.user.create({
         data: {
-          name: 'THaetami',
-          username: 'supmin',
-          email: 'supmin@laundry.com',
+          name: "THaetami",
+          username: "supmin",
+          email: "supmin@laundry.com",
           password: hashedPassword,
           roleUser: {
             create: {
-              role: { connect: { role: 'ADMIN' } },
+              role: { connect: { role: "ADMIN" } },
             },
           },
         },
       });
-      console.log('User Admin Super berhasil dibuat.');
+      console.log("✅ User Admin Super berhasil dibuat.");
     } else {
-      console.log('User Admin Super sudah ada dalam database.');
+      console.log("⏭️ User Admin Super sudah ada.");
     }
 
-    console.log('Seeder untuk roles, users, dan user_roles berhasil dijalankan!');
+    console.log("🎉 Seeder berhasil dijalankan!");
   } catch (error) {
-    console.error('Seeder roles, users, dan user_roles error:', error);
+    console.error("❌ Seeder error:", error);
     process.exit(1);
   } finally {
     await prisma.$disconnect();

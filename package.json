@@ -5,6 +5,11 @@
   "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js",
+    "dev": "nodemon --legacy-watch src/main.js",
+    "migrate": "npx prisma migrate dev",
+    "migrate:prod": "npx prisma migrate deploy",
+    "seed": "node seeders/index.js",
+    "seed:prod": "NODE_ENV=production node seeders/index.js",
     "test": "jest -i",
     "clear": "jest --clearCache"
   },
@@ -17,14 +22,16 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@prisma/client": "^5.16.1",
+    "@prisma/client": "7.4.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "joi": "^17.13.1",
     "jsonwebtoken": "^9.0.2",
-    "winston": "^3.13.0"
+    "winston": "^3.13.0",
+    "pg": "8.18.0",
+    "@prisma/adapter-pg": "7.4.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.5",
@@ -35,7 +42,9 @@
     "@types/supertest": "^6.0.2",
     "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
-    "prisma": "^5.13.0",
-    "supertest": "^7.0.0"
+    "prisma": "7.4.0",
+    "supertest": "^7.0.0",
+    "nodemon": "3.1.11",
+    "@types/pg": "8.16.0"
   }
 }

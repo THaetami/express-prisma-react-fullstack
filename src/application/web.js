@@ -8,33 +8,34 @@ import { customerRoute } from "../route/customer-api.js";
 import { billRoute } from "../route/bill-api.js";
 
 class Web {
+  constructor() {
+    this.web = express();
+    this.web.use(cors());
+    this.web.use(express.json());
+    this.web.use(express.urlencoded({ extended: true }));
+    this.setupRoutes();
+  }
 
-    constructor() {
-        this.web = express();
-        this.web.use(cors());
-        this.web.use(express.json());
-        this.web.use(express.urlencoded({ extended: true }));
-        this.setupRoutes();
-    }
+  setupRoutes() {
+    this.web.get("/", (req, res) => {
+      res.status(200).send("selamat jumpa");
+    });
 
-    setupRoutes() {
-        this.web.use('/api/v1/auth', authRouter);
-        this.web.use('/api/v1', userRouter);
-        this.web.use('/api/v1', productRoute);
-        this.web.use('/api/v1', customerRoute);
-        this.web.use('/api/v1', billRoute);
-        this.web.use(errorMiddleware);
-    }
+    this.web.use("/api/v1/auth", authRouter);
+    this.web.use("/api/v1", userRouter);
+    this.web.use("/api/v1", productRoute);
+    this.web.use("/api/v1", customerRoute);
+    this.web.use("/api/v1", billRoute);
+    this.web.use(errorMiddleware);
+  }
 
-    listen(port, callback) {
-        return this.web.listen(port, callback);
-    }
+  listen(port, callback) {
+    return this.web.listen(port, callback);
+  }
 
-    close(server, callback) {
-        server.close(callback);
-    }
-
+  close(server, callback) {
+    server.close(callback);
+  }
 }
 
 export default Web;
-
